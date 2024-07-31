@@ -4,9 +4,15 @@ import { cn } from "@/lib/utils";
 import useScrollTop from "@/features/hooks/useScrollTop";
 import Logo from "./logo";
 import { ThemeToggle } from "@/components/themeToggle";
+import { useConvexAuth } from "convex/react";
+import { SignInButton, UserButton } from "@clerk/clerk-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Spinner from "@/components/spinner";
 
 export default function Navbar() {
 	const scrolled = useScrollTop();
+	const { isAuthenticated, isLoading } = useConvexAuth();
 
 	return (
 		<div
@@ -16,6 +22,27 @@ export default function Navbar() {
 			)}>
 			<Logo />
 			<div className="md:ml-auto md:justify-end justify-between w-full flex items-center gap-x-2">
+				{isLoading && <Spinner />}
+				{!isAuthenticated && !isLoading && (
+					<>
+						<SignInButton mode="modal" >
+							<Button variant="ghost" size="sm">
+								Log in
+							</Button>
+						</SignInButton>
+						<SignInButton mode="modal">
+							<Button size="sm">Get Notion free</Button>
+						</SignInButton>
+					</>
+				)}
+				{isAuthenticated && !isLoading && (
+					<>
+						<Button variant="ghost" size="sm" asChild>
+							<Link href="/documents">Enter Notion</Link>
+						</Button>
+						<UserButton />
+					</>
+				)}
 				<ThemeToggle></ThemeToggle>
 			</div>
 		</div>
